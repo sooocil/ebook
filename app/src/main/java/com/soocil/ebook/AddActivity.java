@@ -53,7 +53,7 @@ public class AddActivity extends AppCompatActivity {
                 int pages = Integer.parseInt(pagesStr);
 
                 boolean success = myDB.addBook(title, author, pages);
-
+ 
                 if (success) {
                     Toast.makeText(AddActivity.this, "Book added successfully!", Toast.LENGTH_SHORT).show();
                     title_input.setText("");

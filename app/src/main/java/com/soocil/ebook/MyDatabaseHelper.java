@@ -2,6 +2,7 @@ package com.soocil.ebook;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
@@ -38,17 +39,18 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
         onCreate(db);
     }
 
-    // ✅ Now returns boolean
     public boolean addBook(String title, String author, int pages) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues cv = new ContentValues();
-
-        cv.put("book_title", title);
-        cv.put("book_author", author);
-        cv.put("book_pages", pages);
-
-        long result = db.insert("my_library", null, cv);
+        cv.put(COLUMN_TITLE, title);
+        cv.put(COLUMN_AUTHOR, author);
+        cv.put(COLUMN_PAGES, pages);
+        long result = db.insert(TABLE_NAME, null, cv);
         return result != -1;
     }
 
+    public Cursor readAllData() {
+        SQLiteDatabase db = this.getReadableDatabase();
+        return db.rawQuery("SELECT * FROM " + TABLE_NAME, null);
+    }
 }
