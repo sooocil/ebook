@@ -1,3 +1,4 @@
+// MyDatabaseHelper.java (unchanged, included for reference)
 package com.soocil.ebook;
 
 import android.content.ContentValues;
@@ -5,17 +6,13 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-
 import androidx.annotation.Nullable;
-
 import java.util.ArrayList;
 import java.util.List;
 
 public class MyDatabaseHelper extends SQLiteOpenHelper {
-
     private static final String DATABASE_NAME = "ebook.db";
     private static final int DATABASE_VERSION = 1;
-
     public static final String TABLE_NAME = "my_library";
     public static final String COLUMN_ID = "_id";
     public static final String COLUMN_TITLE = "book_title";
@@ -42,39 +39,54 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
         onCreate(db);
     }
 
+    public void deleteOneRow(String row_id) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.delete(TABLE_NAME, COLUMN_ID + "=?", new String[]{row_id});
+        db.close();
+    }
+
     public boolean addBook(String title, String author, int pages) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues cv = new ContentValues();
         cv.put(COLUMN_TITLE, title);
         cv.put(COLUMN_AUTHOR, author);
         cv.put(COLUMN_PAGES, pages);
-<<<<<<< HEAD
-=======
-
->>>>>>> 6a0a8e8 (Feat : Add Books, Update, Delete and Login Logic)
         long result = db.insert(TABLE_NAME, null, cv);
+        db.close();
         return result != -1;
     }
 
-<<<<<<< HEAD
-    public Cursor readAllData() {
-        SQLiteDatabase db = this.getReadableDatabase();
-        return db.rawQuery("SELECT * FROM " + TABLE_NAME, null);
-=======
     public boolean updateBook(int id, String title, String author, int pages) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues cv = new ContentValues();
-
         cv.put(COLUMN_TITLE, title);
         cv.put(COLUMN_AUTHOR, author);
         cv.put(COLUMN_PAGES, pages);
-
-        int result = db.update(TABLE_NAME, cv, COLUMN_ID + "=?", new String[]{String.valueOf(id)});
+        long result = db.update(TABLE_NAME, cv, COLUMN_ID + "=?", new String[]{String.valueOf(id)});
+        db.close();
         return result > 0;
     }
 
+    public boolean doesBookExist(int id) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.query(TABLE_NAME, new String[]{COLUMN_ID}, COLUMN_ID + "=?",
+                new String[]{String.valueOf(id)}, null, null, null);
+        boolean exists = cursor.getCount() > 0;
+        cursor.close();
+        db.close();
+        return exists;
+    }
 
+    public void deleteBook(int id) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.delete(TABLE_NAME, COLUMN_ID + "=?", new String[]{String.valueOf(id)});
+        db.close();
+    }
 
+    public Cursor readAllData() {
+        SQLiteDatabase db = this.getReadableDatabase();
+        return db.rawQuery("SELECT * FROM " + TABLE_NAME, null);
+    }
 
     public List<BookModel> getAllBooks() {
         List<BookModel> bookList = new ArrayList<>();
@@ -95,12 +107,5 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
         cursor.close();
         db.close();
         return bookList;
-    }
-
-    public void deleteBook(int id) {
-        SQLiteDatabase db = this.getWritableDatabase();
-        db.delete(TABLE_NAME, COLUMN_ID + "=?", new String[]{String.valueOf(id)});
-        db.close();
->>>>>>> 6a0a8e8 (Feat : Add Books, Update, Delete and Login Logic)
     }
 }

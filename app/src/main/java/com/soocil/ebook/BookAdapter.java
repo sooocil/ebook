@@ -9,17 +9,14 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-
 import java.util.List;
 
 public class BookAdapter extends RecyclerView.Adapter<BookAdapter.BookViewHolder> {
-
-    Context context;
-    List<BookModel> bookList;
-    MyDatabaseHelper dbHelper;
+    private final Context context;
+    private final List<BookModel> bookList;
+    private final MyDatabaseHelper dbHelper;
 
     public BookAdapter(Context context, List<BookModel> bookList, MyDatabaseHelper dbHelper) {
         this.context = context;
@@ -30,41 +27,41 @@ public class BookAdapter extends RecyclerView.Adapter<BookAdapter.BookViewHolder
     @NonNull
     @Override
     public BookViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(context).inflate(R.layout.book_item, parent, false);
-        return new BookViewHolder(view);
+        View itemView = LayoutInflater.from(context).inflate(R.layout.book_item, parent, false);
+        return new BookViewHolder(itemView);
     }
 
     @Override
     public void onBindViewHolder(@NonNull BookViewHolder holder, int position) {
         BookModel book = bookList.get(position);
+
         holder.title.setText(book.getTitle());
         holder.author.setText(book.getAuthor());
         holder.pages.setText(book.getPages() + " pages");
 
-        holder.btnDelete.setOnClickListener(v -> {
-            new AlertDialog.Builder(context)
-                    .setTitle("Delete Book")
-                    .setMessage("Are you sure you want to delete \"" + book.getTitle() + "\"?")
-                    .setPositiveButton("Yes", (dialog, which) -> {
-                        dbHelper.deleteBook(book.getId());
-                        bookList.remove(position);
-                        notifyItemRemoved(position);
-                        notifyItemRangeChanged(position, bookList.size());
-
-                        if (bookList.isEmpty()) {
-                            if (context instanceof MainActivity) {
+        holder.btnDelete.setOnClickListener(v ->
+                new AlertDialog.Builder(context)
+                        .setTitle("Delete Book")
+                        .setMessage("Are you sure you want to delete \"" + book.getTitle() + "\"?")
+                        .setPositiveButton("Yes", (dialog, which) -> {
+                            dbHelper.deleteBook(book.getId());
+                            bookList.remove(position);
+                            notifyItemRemoved(position);
+                            notifyItemRangeChanged(position, bookList.size());
+                            if (bookList.isEmpty() && context instanceof MainActivity) {
                                 ((MainActivity) context).loadBooks();
                             }
-                        }
-                        Toast.makeText(context, "Deleted", Toast.LENGTH_SHORT).show();
-                    })
-                    .setNegativeButton("No", null)
-                    .show();
-        });
-
-
+                            Toast.makeText(context, "Book deleted", Toast.LENGTH_SHORT).show();
+                        })
+                        .setNegativeButton("No", null)
+                        .show()
+        );
 
         holder.btnEdit.setOnClickListener(v -> {
+            if (book.getId() <= 0) {
+                Toast.makeText(context, "Invalid Book ID", Toast.LENGTH_SHORT).show();
+                return;
+            }
             Intent intent = new Intent(context, UpdateActivity.class);
             intent.putExtra("id", book.getId());
             intent.putExtra("title", book.getTitle());
@@ -72,7 +69,6 @@ public class BookAdapter extends RecyclerView.Adapter<BookAdapter.BookViewHolder
             intent.putExtra("pages", book.getPages());
             context.startActivity(intent);
         });
-
     }
 
     @Override

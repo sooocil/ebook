@@ -1,152 +1,91 @@
+// MainActivity.java
 package com.soocil.ebook;
 
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
-<<<<<<< HEAD
-import android.util.Log;
-import android.widget.Toast;
-=======
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
->>>>>>> 6a0a8e8 (Feat : Add Books, Update, Delete and Login Logic)
-
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-
-<<<<<<< HEAD
 import java.util.ArrayList;
-=======
-import java.util.List;
->>>>>>> 6a0a8e8 (Feat : Add Books, Update, Delete and Login Logic)
 
 public class MainActivity extends AppCompatActivity {
-
-    RecyclerView recyclerView;
-    FloatingActionButton add_button;
-<<<<<<< HEAD
-    CustomAdapter customAdapter;
-    MyDatabaseHelper mydb;
-
-    ArrayList<String> book_id, book_title, book_author, book_pages;
-=======
-    TextView emptyText;
-    ImageView emptyImage;
-    BookAdapter adapter;
-    List<BookModel> bookList;
-    MyDatabaseHelper dbHelper;
->>>>>>> 6a0a8e8 (Feat : Add Books, Update, Delete and Login Logic)
+    private RecyclerView recyclerView;
+    private ImageView emptyImage;
+    private TextView emptyText;
+    private FloatingActionButton addButton;
+    private CustomAdapter adapter;
+    private ArrayList<String> book_id, book_title, book_author, book_pages;
+    private MyDatabaseHelper db;
+    private ActivityResultLauncher<Intent> updateLauncher;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
 
-<<<<<<< HEAD
-        try {
-            setContentView(R.layout.activity_main);  // XML must have recyclerView and add_button
-
-            recyclerView = findViewById(R.id.recyclerView);
-            add_button = findViewById(R.id.add_button);
-
-            if (recyclerView == null || add_button == null) {
-                Toast.makeText(this, "⚠️ View not found in layout!", Toast.LENGTH_LONG).show();
-                Log.e("MainActivity", "Missing view ID(s) in activity_main.xml");
-                return;
-            }
-
-            add_button.setOnClickListener(view -> {
-                Intent intent = new Intent(MainActivity.this, AddActivity.class);
-                startActivity(intent);
-            });
-
-            // Init DB and arrays
-            mydb = new MyDatabaseHelper(MainActivity.this);
-            book_id = new ArrayList<>();
-            book_title = new ArrayList<>();
-            book_author = new ArrayList<>();
-            book_pages = new ArrayList<>();
-
-            // Fetch data safely
-            storeDataInArrays();
-
-            // Setup adapter
-            customAdapter = new CustomAdapter(MainActivity.this, book_id, book_title, book_author, book_pages);
-            recyclerView.setAdapter(customAdapter);
-            recyclerView.setLayoutManager(new LinearLayoutManager(MainActivity.this));
-
-        } catch (Exception e) {
-            Toast.makeText(this, "❌ Crash in MainActivity: " + e.getMessage(), Toast.LENGTH_LONG).show();
-            Log.e("MainActivity", "Exception in onCreate", e);
-        }
-    }
-
-    void storeDataInArrays() {
-        try {
-            Cursor cursor = mydb.readAllData();
-
-            if (cursor == null) {
-                Toast.makeText(this, "Database returned null cursor.", Toast.LENGTH_LONG).show();
-                return;
-            }
-
-            if (cursor.getCount() == 0) {
-                Toast.makeText(this, "📭 No data found.", Toast.LENGTH_SHORT).show();
-            } else {
-                while (cursor.moveToNext()) {
-                    book_id.add(cursor.getString(0));
-                    book_title.add(cursor.getString(1));
-                    book_author.add(cursor.getString(2));
-                    book_pages.add(cursor.getString(3));
-                }
-            }
-            cursor.close(); // Always close cursor
-        } catch (Exception e) {
-            Toast.makeText(this, "Failed to read from DB: " + e.getMessage(), Toast.LENGTH_LONG).show();
-            Log.e("DB_ERROR", "storeDataInArrays failed", e);
-=======
-        // Initialize UI
         recyclerView = findViewById(R.id.recyclerView);
-        add_button = findViewById(R.id.add_button);
+        emptyImage = findViewById(R.id.emptyImage);
         emptyText = findViewById(R.id.emptyText);
-        emptyImage = findViewById(R.id.emptyImage); // Link image view
+        addButton = findViewById(R.id.add_button);
 
-        // DB helper
-        dbHelper = new MyDatabaseHelper(this);
+        book_id = new ArrayList<>();
+        book_title = new ArrayList<>();
+        book_author = new ArrayList<>();
+        book_pages = new ArrayList<>();
+        db = new MyDatabaseHelper(this);
 
-        // Recycler setup
+        adapter = new CustomAdapter(this, book_id, book_title, book_author, book_pages);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView.setAdapter(adapter);
 
-        // Add button action
-        add_button.setOnClickListener(view -> {
-            startActivity(new Intent(MainActivity.this, AddActivity.class));
+        updateLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
+            if (result.getResultCode() == RESULT_OK) {
+                loadBooks(); // Refresh on activity result
+            }
+        });
+
+        addButton.setOnClickListener(v -> {
+            Intent intent = new Intent(MainActivity.this, AddActivity.class);
+            updateLauncher.launch(intent);
         });
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        loadBooks(); // Reload on every resume
+        loadBooks(); // Refresh RecyclerView every time MainActivity is resumed
     }
 
     void loadBooks() {
-        bookList = dbHelper.getAllBooks();
+        book_id.clear();
+        book_title.clear();
+        book_author.clear();
+        book_pages.clear();
 
-        if (bookList.isEmpty()) {
-            recyclerView.setVisibility(View.GONE);
-            emptyText.setVisibility(View.VISIBLE);
+        Cursor cursor = db.readAllData();
+        if (cursor.getCount() == 0) {
             emptyImage.setVisibility(View.VISIBLE);
+            emptyText.setVisibility(View.VISIBLE);
+            recyclerView.setVisibility(View.GONE);
         } else {
-            recyclerView.setVisibility(View.VISIBLE);
-            emptyText.setVisibility(View.GONE);
             emptyImage.setVisibility(View.GONE);
-
-            adapter = new BookAdapter(this, bookList, dbHelper);
-            recyclerView.setAdapter(adapter);
->>>>>>> 6a0a8e8 (Feat : Add Books, Update, Delete and Login Logic)
+            emptyText.setVisibility(View.GONE);
+            recyclerView.setVisibility(View.VISIBLE);
+            while (cursor.moveToNext()) {
+                book_id.add(cursor.getString(0));
+                book_title.add(cursor.getString(1));
+                book_author.add(cursor.getString(2));
+                book_pages.add(cursor.getString(3));
+            }
         }
+        cursor.close();
+        adapter.notifyDataSetChanged();
     }
 }

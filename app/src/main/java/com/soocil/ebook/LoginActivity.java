@@ -10,8 +10,8 @@ import androidx.appcompat.app.AppCompatActivity;
 
 public class LoginActivity extends AppCompatActivity {
 
-    private final String USERNAME = "admin";
-    private final String PASSWORD = "password123";
+    private static final String USERNAME = "admin";
+    private static final String PASSWORD = "password123";
 
     EditText usernameInput, passwordInput;
     Button loginButton;
@@ -20,28 +20,35 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-        getSupportActionBar().hide();
 
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().hide();
+        }
 
         usernameInput = findViewById(R.id.username_input);
         passwordInput = findViewById(R.id.password_input);
         loginButton = findViewById(R.id.login_button);
 
         loginButton.setOnClickListener(v -> {
-            String enteredUsername = usernameInput.getText().toString().trim();
-            String enteredPassword = passwordInput.getText().toString();
+            try {
+                String enteredUsername = usernameInput.getText().toString().trim();
+                String enteredPassword = passwordInput.getText().toString().trim();
 
-            if (enteredUsername.isEmpty() || enteredPassword.isEmpty()) {
-                Toast.makeText(this, "Please enter both username and password", Toast.LENGTH_SHORT).show();
-                return;
-            }
+                if (enteredUsername.isEmpty() || enteredPassword.isEmpty()) {
+                    Toast.makeText(this, "Please enter both username and password", Toast.LENGTH_SHORT).show();
+                    return;
+                }
 
-            if (enteredUsername.equals(USERNAME) && enteredPassword.equals(PASSWORD)) {
-                Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                startActivity(intent);
-                finish();
-            } else {
-                Toast.makeText(this, "Invalid username or password", Toast.LENGTH_SHORT).show();
+                if (enteredUsername.equals(USERNAME) && enteredPassword.equals(PASSWORD)) {
+                    Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                    startActivity(intent);
+                    finish();
+                } else {
+                    Toast.makeText(this, "Invalid username or password", Toast.LENGTH_SHORT).show();
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                Toast.makeText(this, "Error: " + e.getMessage(), Toast.LENGTH_LONG).show();
             }
         });
     }
