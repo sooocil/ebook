@@ -50,9 +50,14 @@ A basic Book Library Android application built with **Android Studio** and **SQL
 1. Clone the repository:
    ```bash
    git clone https://github.com/sooocil/ebook.git
-
+```bash
+    Email = admin
+    Password = password123
+```
 
 Open the project in Android Studio.
+
+
 
 Run the app on an emulator or physical device.
 
