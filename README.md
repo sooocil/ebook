@@ -1,6 +1,35 @@
 # 📚 E-Book
 
-A basic Book Library Android application built with **Android Studio** and **SQLIite Database**.
+A basic Book Library Android application built with **Android Studio** and **SQLite Database**.
+
+<hr/>
+
+## 📸 Screenshots
+
+
+<table>
+  <tr>
+    <td><strong>Login Page</strong><br><img src="Public/loginPage.png" alt="Login Page" width="310"/></td>
+    <td><strong>Book List</strong><br><img src="Public/bookLists.png" alt="Book List" width="310"/></td>
+    <td><strong>Add Book</strong><br><img src="Public/addBook.png" alt="Add Book" width="310"/></td>
+  </tr>
+</table>
+<hr/>
+<table>
+  <tr>
+    <td><strong>Update Book</strong><br><img src="Public/updateBook.png" alt="Update Book" width="310"/></td>
+    <td><strong>Confirm Delete</strong><br><img src="Public/confirmDelete.png" alt="Confirm Delete" width="310"/></td>
+    <td><strong>No Books Found</strong><br><img src="Public/noBooksFound.png" alt="No Books Found" width="310"/></td>
+  </tr>
+  <tr>
+    <td></td>
+    <td></td>
+    <td></td>
+  </tr>
+</table>
+
+<hr/>
+
 
 ## ✨ Features
 
@@ -21,27 +50,12 @@ A basic Book Library Android application built with **Android Studio** and **SQL
 1. Clone the repository:
    ```bash
    git clone https://github.com/sooocil/ebook.git
-   ```
 
-2. Open the project in **Android Studio**.
 
-3. Run the app on an emulator or physical device.
+Open the project in Android Studio.
 
-## 📂 Project Structure
+Run the app on an emulator or physical device.
 
-```
-EBook/
-├── app/
-│   ├── src/
-│   │   ├── main/
-│   │   │   ├── java/...     # Java source files
-│   │   │   ├── res/         # Layouts, drawables, etc.
-│   │   │   └── AndroidManifest.xml
-├── build.gradle
-└── README.md
-```
 
-## 📸 Screenshots
 
-_Loading .... 
 
