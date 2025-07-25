@@ -1,9 +1,10 @@
 <resources>
-    <string name="app_name">EBook</string>
+    <string name="app_name">Kitab</string>
     <string name="add_item">Add Item</string>
     <string name="book_title">Book Title</string>
     <string name="book_author">Book Author</string>
     <string name="book_page">Book Page</string>
     <string name="add_book">Add Book</string>
+    <string name="update_book">Update Book</string>
 
 </resources>

@@ -1,5 +1,6 @@
 package com.soocil.ebook;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Button;
@@ -59,9 +60,15 @@ public class AddActivity extends AppCompatActivity {
                     title_input.setText("");
                     author_input.setText("");
                     pages_input.setText("");
+                    Intent intent = new Intent(AddActivity.this, MainActivity.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(intent);
+                    finish();
                 } else {
                     Toast.makeText(AddActivity.this, "Failed to add book. Please try again.", Toast.LENGTH_SHORT).show();
                 }
+
+
 
             } catch (NumberFormatException e) {
                 Toast.makeText(AddActivity.this, "Please enter a valid number for pages", Toast.LENGTH_SHORT).show();
